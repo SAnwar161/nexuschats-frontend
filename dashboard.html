@@ -6,7 +6,7 @@
   <title>Dashboard - NexusChats</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body onload="protectDashboard()">
 
   <nav class="navbar">
     <a href="index.html">Home</a>
@@ -26,19 +26,6 @@
     </div>
   </div>
 
-  <script>
-    function sendMessage() {
-      const input = document.getElementById('messageInput');
-      const chatBox = document.getElementById('chatBox');
-      if (input.value.trim() !== '') {
-        const msg = document.createElement('p');
-        msg.innerHTML = `<strong>You:</strong> ${input.value}`;
-        chatBox.appendChild(msg);
-        input.value = '';
-        chatBox.scrollTop = chatBox.scrollHeight;
-      }
-    }
-  </script>
-
+  <script src="scripts.js"></script>
 </body>
 </html>
