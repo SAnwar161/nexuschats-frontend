@@ -28,6 +28,5 @@ Thumbs.db
 # Cache
 .cache/
 chore: add .gitignore
-git status 
 
 
