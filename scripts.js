@@ -11,7 +11,6 @@ function handleSignup(event) {
     return;
   }
 
-  // Save user to localStorage (simulated DB)
   localStorage.setItem('nexusUser', JSON.stringify({ name, email, password }));
   alert("Signup successful! Please log in.");
   window.location.href = 'login.html';
@@ -51,4 +50,10 @@ function protectDashboard() {
     alert("Please log in first.");
     window.location.href = 'login.html';
   }
+}
+
+// Logout
+function logoutUser() {
+  localStorage.removeItem('nexusLoggedIn');
+  window.location.href = 'index.html';
 }
