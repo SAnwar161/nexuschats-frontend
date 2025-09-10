@@ -1,1 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - NexusChats</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
 
+  <nav class="navbar">
+    <a href="index.html">Home</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="login.html">Login</a>
+    <a href="signup.html">Signup</a>
+  </nav>
+
+  <div class="container">
+    <h2>Chat Dashboard</h2>
+    <div class="chat-box" id="chatBox">
+      <p><strong>System:</strong> Welcome to NexusChats!</p>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="messageInput" placeholder="Type your message...">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const chatBox = document.getElementById('chatBox');
+      if (input.value.trim() !== '') {
+        const msg = document.createElement('p');
+        msg.innerHTML = `<strong>You:</strong> ${input.value}`;
+        chatBox.appendChild(msg);
+        input.value = '';
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    }
+  </script>
+
+</body>
+</html>
