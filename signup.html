@@ -17,14 +17,15 @@
 
   <div class="container">
     <h2>Create Your Account</h2>
-    <form>
-      <input type="text" placeholder="Full Name" required>
-      <input type="email" placeholder="Email" required>
-      <input type="password" placeholder="Password" required>
-      <input type="password" placeholder="Confirm Password" required>
+    <form onsubmit="handleSignup(event)">
+      <input id="signupName" type="text" placeholder="Full Name" required>
+      <input id="signupEmail" type="email" placeholder="Email" required>
+      <input id="signupPassword" type="password" placeholder="Password" required>
+      <input id="signupConfirm" type="password" placeholder="Confirm Password" required>
       <button type="submit">Sign Up</button>
     </form>
   </div>
 
+  <script src="scripts.js"></script>
 </body>
 </html>
