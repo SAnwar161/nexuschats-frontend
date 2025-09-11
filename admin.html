@@ -3,14 +3,28 @@
 <head>
   <title>Admin Dashboard</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <h2>Admin Dashboard</h2>
   <button onclick="logout()">Logout</button>
 
+  <div class="filters">
+    <input type="date" id="startDate" />
+    <input type="date" id="endDate" />
+    <input type="text" id="searchQuery" placeholder="Search by email or event..." />
+    <select id="countryFilter">
+      <option value="">All Countries</option>
+      <option value="Pakistan">Pakistan</option>
+      <option value="USA">USA</option>
+      <option value="UK">UK</option>
+    </select>
+    <button onclick="applyFilters()">Apply</button>
+  </div>
+
   <h3>Registered Users</h3>
   <table id="userTable" border="1">
-    <tr><th>Email</th><th>Plan</th><th>Created At</th></tr>
+    <tr><th>Email</th><th>Plan</th><th>Country</th><th>Created At</th></tr>
   </table>
 
   <h3>Recent Events</h3>
@@ -18,35 +32,95 @@
     <tr><th>Event</th><th>Metadata</th><th>Timestamp</th></tr>
   </table>
 
+  <h3>Signups by Country</h3>
+  <canvas id="countryChart" width="400" height="200"></canvas>
+
+  <h3>Signups Over Time</h3>
+  <canvas id="signupChart" width="400" height="200"></canvas>
+
   <script src="scripts.js"></script>
   <script>
-    validateSession().then(user => {
+    async function validateAndLoad() {
+      const user = await validateSession();
       if (!user || user.email !== 'sadat@nexuschats.com') {
         alert('Access denied');
         window.location.href = 'login.html';
         return;
       }
+      applyFilters(); // Load initial data
+    }
 
-      fetch(`${API_BASE}/admin/overview`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwt')}`
-        }
-      })
-      .then(res => res.json())
-      .then(data => {
-        const userTable = document.getElementById('userTable');
-        data.users.forEach(u => {
-          const row = userTable.insertRow();
-          row.innerHTML = `<td>${u.email}</td><td>${u.plan}</td><td>${u.created_at}</td>`;
-        });
+    async function applyFilters() {
+      const start = document.getElementById('startDate').value;
+      const end = document.getElementById('endDate').value;
+      const query = document.getElementById('searchQuery').value;
+      const country = document.getElementById('countryFilter').value;
 
-        const eventTable = document.getElementById('eventTable');
-        data.events.forEach(e => {
-          const row = eventTable.insertRow();
-          row.innerHTML = `<td>${e.event}</td><td>${e.metadata}</td><td>${e.timestamp}</td>`;
-        });
+      const res = await fetch(`${API_BASE}/admin/overview?start=${start}&end=${end}&q=${encodeURIComponent(query)}&country=${country}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('jwt')}` }
       });
-    });
+      const data = await res.json();
+      renderDashboard(data);
+      renderCharts(data.users);
+    }
+
+    function renderDashboard(data) {
+      const userTable = document.getElementById('userTable');
+      userTable.innerHTML = '<tr><th>Email</th><th>Plan</th><th>Country</th><th>Created At</th></tr>';
+      data.users.forEach(u => {
+        const row = userTable.insertRow();
+        row.innerHTML = `<td>${u.email}</td><td>${u.plan}</td><td>${u.country || ''}</td><td>${u.created_at}</td>`;
+      });
+
+      const eventTable = document.getElementById('eventTable');
+      eventTable.innerHTML = '<tr><th>Event</th><th>Metadata</th><th>Timestamp</th></tr>';
+      data.events.forEach(e => {
+        const row = eventTable.insertRow();
+        row.innerHTML = `<td>${e.event}</td><td>${e.metadata}</td><td>${e.timestamp}</td>`;
+      });
+    }
+
+    function renderCharts(users) {
+      const countryCounts = {};
+      const dateCounts = {};
+
+      users.forEach(u => {
+        const country = u.country || 'Unknown';
+        countryCounts[country] = (countryCounts[country] || 0) + 1;
+
+        const date = u.created_at.split('T')[0];
+        dateCounts[date] = (dateCounts[date] || 0) + 1;
+      });
+
+      const countryCtx = document.getElementById('countryChart').getContext('2d');
+      new Chart(countryCtx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(countryCounts),
+          datasets: [{
+            label: 'Signups by Country',
+            data: Object.values(countryCounts),
+            backgroundColor: '#4e79a7'
+          }]
+        }
+      });
+
+      const signupCtx = document.getElementById('signupChart').getContext('2d');
+      new Chart(signupCtx, {
+        type: 'line',
+        data: {
+          labels: Object.keys(dateCounts),
+          datasets: [{
+            label: 'Signups Over Time',
+            data: Object.values(dateCounts),
+            borderColor: '#f28e2b',
+            fill: false
+          }]
+        }
+      });
+    }
+
+    validateAndLoad();
   </script>
 </body>
 </html>
