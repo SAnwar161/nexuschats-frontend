@@ -7,9 +7,9 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main>
+  <main class="auth-container">
     <h1>Create Your Account</h1>
-    <form id="signup-form">
+    <form id="signup-form" class="auth-form">
       <input type="text" id="name" placeholder="Full Name" required />
       <input type="email" id="email" placeholder="Email" required />
       <input type="password" id="password" placeholder="Password" required minlength="8" />
@@ -17,7 +17,7 @@
       <button type="submit">Sign Up</button>
       <p id="signup-error" class="error"></p>
     </form>
-    <p>Already have an account? <a href="login.html">Log in</a></p>
+    <p class="switch-auth">Already have an account? <a href="login.html">Log in</a></p>
   </main>
 
   <script src="scripts.js"></script>
