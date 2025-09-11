@@ -38,6 +38,9 @@
   <h3>Signups Over Time</h3>
   <canvas id="signupChart" width="400" height="200"></canvas>
 
+  <h3>Plan Distribution</h3>
+  <canvas id="planChart" width="400" height="200"></canvas>
+
   <script src="scripts.js"></script>
   <script>
     async function validateAndLoad() {
@@ -47,7 +50,7 @@
         window.location.href = 'login.html';
         return;
       }
-      applyFilters(); // Load initial data
+      applyFilters();
     }
 
     async function applyFilters() {
@@ -60,11 +63,7 @@
         headers: { Authorization: `Bearer ${localStorage.getItem('jwt')}` }
       });
       const data = await res.json();
-      renderDashboard(data);
-      renderCharts(data.users);
-    }
 
-    function renderDashboard(data) {
       const userTable = document.getElementById('userTable');
       userTable.innerHTML = '<tr><th>Email</th><th>Plan</th><th>Country</th><th>Created At</th></tr>';
       data.users.forEach(u => {
@@ -78,57 +77,11 @@
         const row = eventTable.insertRow();
         row.innerHTML = `<td>${e.event}</td><td>${e.metadata}</td><td>${e.timestamp}</td>`;
       });
-    }
 
-    function renderCharts(users) {
-      const countryCounts = {};
-      const dateCounts = {};
-
-      users.forEach(u => {
-        const country = u.country || 'Unknown';
-        countryCounts[country] = (countryCounts[country] || 0) + 1;
-
-        const date = u.created_at.split('T')[0];
-        dateCounts[date] = (dateCounts[date] || 0) + 1;
-      });
-
-      const countryCtx = document.getElementById('countryChart').getContext('2d');
-      new Chart(countryCtx, {
-        type: 'bar',
-        data: {
-          labels: Object.keys(countryCounts),
-          datasets: [{
-            label: 'Signups by Country',
-            data: Object.values(countryCounts),
-            backgroundColor: '#4e79a7'
-          }]
-        }
-      });
-
-      const signupCtx = document.getElementById('signupChart').getContext('2d');
-      new Chart(signupCtx, {
-        type: 'line',
-        data: {
-          labels: Object.keys(dateCounts),
-          datasets: [{
-            label: 'Signups Over Time',
-            data: Object.values(dateCounts),
-            borderColor: '#f28e2b',
-            fill: false
-          }]
-        }
-      });
+      renderCharts(data.users);
     }
 
     validateAndLoad();
-    <h3>Signups by Country</h3>
-<canvas id="countryChart" width="400" height="200"></canvas>
-
-<h3>Signups Over Time</h3>
-<canvas id="signupChart" width="400" height="200"></canvas>
-
-<h3>Plan Distribution</h3>
-<canvas id="planChart" width="400" height="200"></canvas>
   </script>
 </body>
 </html>
