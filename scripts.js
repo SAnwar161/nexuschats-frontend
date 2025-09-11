@@ -1,59 +1,47 @@
-// Handle Signup
-function handleSignup(event) {
-  event.preventDefault();
-  const name = document.getElementById('signupName').value.trim();
-  const email = document.getElementById('signupEmail').value.trim();
-  const password = document.getElementById('signupPassword').value;
-  const confirm = document.getElementById('signupConfirm').value;
+// Login handler
+document.getElementById('login-form')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-  if (password !== confirm) {
-    alert("Passwords do not match!");
-    return;
-  }
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
 
-  localStorage.setItem('nexusUser', JSON.stringify({ name, email, password }));
-  alert("Signup successful! Please log in.");
-  window.location.href = 'login.html';
-}
+  const res = await fetch('https://nexus-auth-service.sadat161.workers.dev/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
 
-// Handle Login
-function handleLogin(event) {
-  event.preventDefault();
-  const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPassword').value;
+  const data = await res.json();
 
-  const storedUser = JSON.parse(localStorage.getItem('nexusUser'));
-  if (storedUser && storedUser.email === email && storedUser.password === password) {
-    localStorage.setItem('nexusLoggedIn', 'true');
+  if (res.ok) {
+    localStorage.setItem('authToken', data.token);
     window.location.href = 'dashboard.html';
   } else {
-    alert("Invalid email or password.");
+    document.getElementById('login-result').textContent = data.error;
   }
+});
+
+// Dashboard session check
+if (window.location.pathname.endsWith('dashboard.html')) {
+  const token = localStorage.getItem('authToken');
+
+  fetch('https://nexus-auth-service.sadat161.workers.dev/auth/me', {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${token}` }
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.user) {
+        document.getElementById('user-info').textContent =
+          `Logged in as ${data.user.email} — Plan: ${data.user.plan}`;
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
 }
 
-// Handle Chat Send
-function sendMessage() {
-  const input = document.getElementById('messageInput');
-  const chatBox = document.getElementById('chatBox');
-  if (input.value.trim() !== '') {
-    const msg = document.createElement('p');
-    msg.innerHTML = `<strong>You:</strong> ${input.value}`;
-    chatBox.appendChild(msg);
-    input.value = '';
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-}
-
-// Protect Dashboard
-function protectDashboard() {
-  if (localStorage.getItem('nexusLoggedIn') !== 'true') {
-    alert("Please log in first.");
-    window.location.href = 'login.html';
-  }
-}
-
-// Logout
-function logoutUser() {
-  localStorage.removeItem('nexusLoggedIn');
-  window.location.href = 'index.html';
+// Logout function
+function logout() {
+  localStorage.removeItem('authToken');
+  window.location.href = 'login.html';
 }
