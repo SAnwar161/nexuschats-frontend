@@ -1,60 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard - NexusChats</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="auth-container">
-    <h1>Welcome, <span id="user-name">Loading...</span></h1>
-    <p>You are now logged in to NexusChats.</p>
-    <button id="logout-btn">Log Out</button>
-    <p id="dashboard-error" class="error"></p>
-  </main>
+  <h2 id="welcome">Loading...</h2>
+  <button onclick="logout()">Logout</button>
 
   <script src="scripts.js"></script>
   <script>
-    // Run token verification on page load
-    document.addEventListener('DOMContentLoaded', async () => {
-      const token = localStorage.getItem('token');
-      const errorEl = document.getElementById('dashboard-error');
-      const nameEl = document.getElementById('user-name');
-
-      if (!token) {
-        window.location.href = '/login.html';
-        return;
+    validateSession().then(user => {
+      if (user) {
+        document.getElementById('welcome').textContent = `Welcome, ${user.email}`;
       }
-
-      try {
-        const res = await fetch('https://nexus-auth-service.yourdomain.com/auth/me', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          localStorage.removeItem('token');
-          window.location.href = '/login.html';
-          return;
-        }
-
-        // Display user's name
-        nameEl.textContent = data.name || 'User';
-
-      } catch (err) {
-        console.error(err);
-        errorEl.textContent = 'Unable to verify session. Please log in again.';
-        localStorage.removeItem('token');
-        setTimeout(() => window.location.href = '/login.html', 2000);
-      }
-    });
-
-    // Logout handler
-    document.getElementById('logout-btn').addEventListener('click', () => {
-      localStorage.removeItem('token');
-      window.location.href = '/login.html';
     });
   </script>
 </body>
