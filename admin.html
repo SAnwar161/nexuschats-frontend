@@ -1,1 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h2>Admin Dashboard</h2>
+  <button onclick="logout()">Logout</button>
 
+  <h3>Registered Users</h3>
+  <table id="userTable" border="1">
+    <tr><th>Email</th><th>Plan</th><th>Created At</th></tr>
+  </table>
+
+  <h3>Recent Events</h3>
+  <table id="eventTable" border="1">
+    <tr><th>Event</th><th>Metadata</th><th>Timestamp</th></tr>
+  </table>
+
+  <script src="scripts.js"></script>
+  <script>
+    validateSession().then(user => {
+      if (!user || user.email !== 'sadat@nexuschats.com') {
+        alert('Access denied');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      fetch(`${API_BASE}/admin/overview`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt')}`
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        const userTable = document.getElementById('userTable');
+        data.users.forEach(u => {
+          const row = userTable.insertRow();
+          row.innerHTML = `<td>${u.email}</td><td>${u.plan}</td><td>${u.created_at}</td>`;
+        });
+
+        const eventTable = document.getElementById('eventTable');
+        data.events.forEach(e => {
+          const row = eventTable.insertRow();
+          row.innerHTML = `<td>${e.event}</td><td>${e.metadata}</td><td>${e.timestamp}</td>`;
+        });
+      });
+    });
+  </script>
+</body>
+</html>
