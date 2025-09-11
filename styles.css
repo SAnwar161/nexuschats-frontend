@@ -1,10 +1,18 @@
+/* ===== Global Reset ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   font-family: Arial, sans-serif;
   background: #f5f7fa;
-  margin: 0;
-  padding: 0;
+  color: #333;
+  line-height: 1.5;
 }
 
+/* ===== Auth Container ===== */
 .auth-container {
   max-width: 400px;
   margin: 60px auto;
@@ -17,8 +25,11 @@ body {
 .auth-container h1 {
   text-align: center;
   margin-bottom: 20px;
+  font-size: 1.8rem;
+  color: #222;
 }
 
+/* ===== Forms ===== */
 .auth-form {
   display: flex;
   flex-direction: column;
@@ -30,6 +41,12 @@ body {
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.auth-form input:focus {
+  border-color: #4a90e2;
+  outline: none;
 }
 
 .auth-form button {
@@ -40,6 +57,11 @@ body {
   border-radius: 4px;
   font-size: 16px;
   cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.auth-form button:hover:not(:disabled) {
+  background: #3a78c2;
 }
 
 .auth-form button:disabled {
@@ -47,18 +69,45 @@ body {
   cursor: not-allowed;
 }
 
+/* ===== Error Messages ===== */
 .error {
   color: #d9534f;
   font-size: 14px;
   min-height: 18px;
+  margin-top: -6px;
+  margin-bottom: 10px;
 }
 
+/* ===== Switch Auth Links ===== */
 .switch-auth {
   text-align: center;
   margin-top: 15px;
+  font-size: 14px;
 }
 
 .switch-auth a {
   color: #4a90e2;
   text-decoration: none;
+}
+
+.switch-auth a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Dashboard ===== */
+#logout-btn {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 16px;
+  background: #d9534f;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#logout-btn:hover {
+  background: #b43f3b;
 }
