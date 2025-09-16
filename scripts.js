@@ -1,5 +1,23 @@
 const API_BASE = 'https://api.nexuschats.org'; // corrected domain
 
+// 🔐 Login function
+async function loginUser(email, password) {
+  const res = await fetch(`${API_BASE}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
+
+  const data = await res.json();
+  if (data.token) {
+    localStorage.setItem('jwt', data.token);
+    window.location.href = 'dashboard.html';
+  } else {
+    alert('Login failed');
+  }
+}
+
+// 🧠 Session validation
 async function validateSession() {
   const token = localStorage.getItem('jwt');
   if (!token) return null;
@@ -15,11 +33,13 @@ async function validateSession() {
   return data.user || null;
 }
 
+// 🚪 Logout
 function logout() {
   localStorage.removeItem('jwt');
   window.location.href = 'login.html';
 }
 
+// 📊 Chart rendering
 function renderCharts(users) {
   // 🗺️ Country Distribution
   const countryCounts = {};
