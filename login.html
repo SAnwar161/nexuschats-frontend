@@ -14,10 +14,19 @@
 
   <script src="scripts.js"></script>
   <script>
-    validateSession(false).then(user => {
+    // ✅ Check session and redirect if already logged in
+    validateSession().then(user => {
       if (user) window.location.href = 'dashboard.html';
     });
-    handleAuthForm('login', 'loginForm', 'dashboard.html');
+
+    // ✅ Wire form to loginUser() defined in scripts.js
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const email = form.email.value;
+      const password = form.password.value;
+      await loginUser(email, password);
+    });
   </script>
 </body>
 </html>
