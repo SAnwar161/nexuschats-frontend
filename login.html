@@ -25,6 +25,11 @@
       const form = e.target;
       const email = form.email.value;
       const password = form.password.value;
+
+      // 🔍 Log raw input values with quotes for debugging
+      console.log('📤 Raw email:', `"${email}"`);
+      console.log('📤 Raw password:', `"${password}"`);
+
       await loginUser(email, password);
     });
   </script>
