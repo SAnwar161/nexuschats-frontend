@@ -1,7 +1,10 @@
 console.log("✅ scripts.js loaded");
+
 const API_BASE = 'https://api.nexuschats.org';
 
 async function loginUser(email, password) {
+  console.log("🔐 Attempting login with:", email); // Optional debug
+
   const res = await fetch(`${API_BASE}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -9,11 +12,13 @@ async function loginUser(email, password) {
   });
 
   const data = await res.json();
+  console.log("📥 Login response:", data); // Optional debug
+
   if (data.token) {
     localStorage.setItem('jwt', data.token);
     window.location.href = 'dashboard.html';
   } else {
-    alert('Login failed');
+    alert(data.error || 'Login failed');
   }
 }
 
@@ -28,7 +33,9 @@ async function validateSession() {
   });
 
   if (!res.ok) return null;
+
   const data = await res.json();
+  console.log("🧾 Session validation result:", data); // Optional debug
   return data.user || null;
 }
 
