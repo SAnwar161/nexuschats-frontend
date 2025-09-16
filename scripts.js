@@ -2,8 +2,8 @@ console.log("✅ scripts.js loaded");
 
 const API_BASE = 'https://api.nexuschats.org';
 
-async function loginUser(email, password) {
-  console.log("🔐 Attempting login with:", email); // Optional debug
+window.loginUser = async function(email, password) {
+  console.log("🔐 Attempting login with:", email);
 
   const res = await fetch(`${API_BASE}/auth/login`, {
     method: 'POST',
@@ -12,7 +12,7 @@ async function loginUser(email, password) {
   });
 
   const data = await res.json();
-  console.log("📥 Login response:", data); // Optional debug
+  console.log("📥 Login response:", data);
 
   if (data.token) {
     localStorage.setItem('jwt', data.token);
@@ -20,9 +20,9 @@ async function loginUser(email, password) {
   } else {
     alert(data.error || 'Login failed');
   }
-}
+};
 
-async function validateSession() {
+window.validateSession = async function() {
   const token = localStorage.getItem('jwt');
   if (!token) return null;
 
@@ -35,11 +35,11 @@ async function validateSession() {
   if (!res.ok) return null;
 
   const data = await res.json();
-  console.log("🧾 Session validation result:", data); // Optional debug
+  console.log("🧾 Session validation result:", data);
   return data.user || null;
-}
+};
 
-function logout() {
+window.logout = function() {
   localStorage.removeItem('jwt');
   window.location.href = 'login.html';
-}
+};
