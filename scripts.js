@@ -1,15 +1,18 @@
-const API_BASE = 'https://api.nexuschats.com'; // adjust if needed
+const API_BASE = 'https://api.nexuschats.org'; // corrected domain
 
 async function validateSession() {
   const token = localStorage.getItem('jwt');
   if (!token) return null;
 
   const res = await fetch(`${API_BASE}/auth/me`, {
-    headers: { Authorization: `Bearer ${token}` }
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token })
   });
 
   if (!res.ok) return null;
-  return await res.json();
+  const data = await res.json();
+  return data.user || null;
 }
 
 function logout() {
