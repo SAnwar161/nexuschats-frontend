@@ -1,3 +1,4 @@
+console.log("✅ scripts.js loaded");
 const API_BASE = 'https://api.nexuschats.org';
 
 async function loginUser(email, password) {
